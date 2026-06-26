@@ -37,7 +37,7 @@ export class TitleScene extends Phaser.Scene {
   constructor() { super('Title'); }
 
   create(): void {
-    this.g = this.add.graphics();
+    this.g = this.add.graphics().setDepth(0);
     this.audio = new GameAudio();
 
     this.titleCur = 0;
@@ -46,7 +46,7 @@ export class TitleScene extends Phaser.Scene {
     this.resetAnim();
 
     // Cursor
-    this.cursorText = this.add.text(0, 0, '▶', { fontFamily: '"Press Start 2P"', fontSize: '10px', color: C.uiRed }).setVisible(false);
+    this.cursorText = this.add.text(0, 0, '▶', { fontFamily: '"Press Start 2P"', fontSize: '10px', color: C.uiRed }).setVisible(false).setDepth(20);
 
     this.input.keyboard!.on('keydown', (e: KeyboardEvent) => this.handleKey(e.key));
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => this.handleClick(pointer));
@@ -266,14 +266,14 @@ export class TitleScene extends Phaser.Scene {
   private ensureTitleTexts(): void {
     if (this.titleTexts.length > 0) return;
     const style: Phaser.Types.GameObjects.Text.TextStyle = { fontFamily: '"Press Start 2P"', color: C.uiText };
-    this.titleTexts.push(this.add.text(320, 22, t('titleMain'), { ...style, fontSize: '24px', color: C.uiRed }).setOrigin(0.5, 0));
-    this.titleTexts.push(this.add.text(320, 58, t('titleSub'), { ...style, fontSize: '18px' }).setOrigin(0.5, 0));
-    this.titleTexts.push(this.add.text(320, 88, t('titleEdition'), { ...style, fontSize: '7px', color: C.uiTextLight }).setOrigin(0.5, 0));
+    this.titleTexts.push(this.add.text(320, 22, t('titleMain'), { ...style, fontSize: '24px', color: C.uiRed }).setOrigin(0.5, 0).setDepth(10));
+    this.titleTexts.push(this.add.text(320, 58, t('titleSub'), { ...style, fontSize: '18px' }).setOrigin(0.5, 0).setDepth(10));
+    this.titleTexts.push(this.add.text(320, 88, t('titleEdition'), { ...style, fontSize: '7px', color: C.uiTextLight }).setOrigin(0.5, 0).setDepth(10));
 
     this.menuOpts.forEach((key) => {
-      this.menuTexts.push(this.add.text(410, 0, t(key), { ...style, fontSize: '10px' }));
+      this.menuTexts.push(this.add.text(410, 0, t(key), { ...style, fontSize: '10px' }).setDepth(10));
     });
-    this.hiScoreText = this.add.text(320, 450, `${t('hiScore')}: ${getTopScore()}`, { ...style, fontSize: '7px', color: C.uiTextLight }).setOrigin(0.5, 0);
+    this.hiScoreText = this.add.text(320, 450, `${t('hiScore')}: ${getTopScore()}`, { ...style, fontSize: '7px', color: C.uiTextLight }).setOrigin(0.5, 0).setDepth(10);
   }
 
   private ensureHiScoreText(): void {
@@ -286,12 +286,12 @@ export class TitleScene extends Phaser.Scene {
     if (!this._hsTexts) this._hsTexts = [];
     if (this._hsTexts.length === 0) {
       const style: Phaser.Types.GameObjects.Text.TextStyle = { fontFamily: '"Press Start 2P"', fontSize: '9px', color: C.uiText };
-      this._hsTexts.push(this.add.text(320, 278, t('highScores'), { ...style, fontSize: '12px', color: C.uiRed }).setOrigin(0.5, 0));
-      this._hsTexts.push(this.add.text(320, 330, '', { ...style, color: C.uiTextLight }).setOrigin(0.5, 0));
+      this._hsTexts.push(this.add.text(320, 278, t('highScores'), { ...style, fontSize: '12px', color: C.uiRed }).setOrigin(0.5, 0).setDepth(10));
+      this._hsTexts.push(this.add.text(320, 330, '', { ...style, color: C.uiTextLight }).setOrigin(0.5, 0).setDepth(10));
       for (let i = 0; i < 5; i++) {
-        this._hsTexts.push(this.add.text(130, 306 + i * 22, '', style));
+        this._hsTexts.push(this.add.text(130, 306 + i * 22, '', { ...style }).setDepth(10));
       }
-      this._hsTexts.push(this.add.text(320, 420, t('pressEnterBack'), { ...style, fontSize: '8px', color: C.uiTextLight }).setOrigin(0.5, 0));
+      this._hsTexts.push(this.add.text(320, 420, t('pressEnterBack'), { ...style, fontSize: '8px', color: C.uiTextLight }).setOrigin(0.5, 0).setDepth(10));
     }
     this._hsTexts[0].setVisible(true);
     if (scores.length === 0) {
@@ -318,7 +318,7 @@ export class TitleScene extends Phaser.Scene {
     if (!this._howTexts) this._howTexts = [];
     if (this._howTexts.length === 0) {
       const style: Phaser.Types.GameObjects.Text.TextStyle = { fontFamily: '"Press Start 2P"', fontSize: '8px', color: C.uiText };
-      this._howTexts.push(this.add.text(320, 258, t('howTitle'), { ...style, fontSize: '12px', color: C.uiRed }).setOrigin(0.5, 0));
+      this._howTexts.push(this.add.text(320, 258, t('howTitle'), { ...style, fontSize: '12px', color: C.uiRed }).setOrigin(0.5, 0).setDepth(10));
       const lines = [
         t('how1'), t('how2'), t('how3'),
         t('how4'), t('how5'), t('how6'),
@@ -327,7 +327,7 @@ export class TitleScene extends Phaser.Scene {
       ];
       lines.forEach((l, i) => {
         const col = i === lines.length - 1 ? C.uiTextLight : C.uiText;
-        this._howTexts.push(this.add.text(i < 8 ? 100 : 320, i < 8 ? 286 + i * 18 : 420, l, { ...style, color: col }).setOrigin(i >= 8 ? 0.5 : 0, 0));
+        this._howTexts.push(this.add.text(i < 8 ? 100 : 320, i < 8 ? 286 + i * 18 : 420, l, { ...style, color: col }).setOrigin(i >= 8 ? 0.5 : 0, 0).setDepth(10));
       });
     }
   }

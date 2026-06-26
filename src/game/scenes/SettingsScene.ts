@@ -9,6 +9,7 @@ import { t, setLang, getLang } from '../i18n';
  */
 export class SettingsScene extends Phaser.Scene {
   private g!: Phaser.GameObjects.Graphics;
+  private curGfx!: Phaser.GameObjects.Graphics;
   private audio!: GameAudio;
   private cur = 0;
   private texts: Phaser.GameObjects.Text[] = [];
@@ -16,7 +17,8 @@ export class SettingsScene extends Phaser.Scene {
   constructor() { super('Settings'); }
 
   create(): void {
-    this.g = this.add.graphics();
+    this.g = this.add.graphics().setDepth(0);
+    this.curGfx = this.add.graphics().setDepth(15);
     this.audio = new GameAudio();
     this.cur = 0;
     this.texts.forEach(tx => tx.destroy());
@@ -49,36 +51,37 @@ export class SettingsScene extends Phaser.Scene {
 
       this.texts.push(this.add.text(320, 100, t('settingsTitle'), {
         ...style, fontSize: '16px', color: C.uiRed,
-      }).setOrigin(0.5, 0));
+      }).setOrigin(0.5, 0).setDepth(10));
 
       this.texts.push(this.add.text(320, 155, t('language'), {
         ...style, fontSize: '10px', color: C.uiTextLight,
-      }).setOrigin(0.5, 0));
+      }).setOrigin(0.5, 0).setDepth(10));
 
       this.texts.push(this.add.text(320, 210, '', {
         ...style, fontSize: '12px', color: C.uiText,
-      }).setOrigin(0.5, 0));
+      }).setOrigin(0.5, 0).setDepth(10));
 
       this.texts.push(this.add.text(320, 275, t('pressEnterBack'), {
         ...style, fontSize: '8px', color: C.uiTextLight,
-      }).setOrigin(0.5, 0));
+      }).setOrigin(0.5, 0).setDepth(10));
     }
 
     const lang = getLang();
     const langLabel = lang === 'en' ? 'ENGLISH  ▸  日本語' : 'English  ▸  日本語';
     this.texts[2].setText(langLabel);
 
-    // Cursor
+    // Cursor + highlight (separate graphics at higher depth)
+    this.curGfx.clear();
     const red = Phaser.Display.Color.HexStringToColor(C.uiRed).color;
-    this.g.fillStyle(red);
+    this.curGfx.fillStyle(red);
     const cy = 208;
     if (Math.floor(Date.now() / 250) % 2 === 0) {
-      this.g.fillTriangle(170, cy, 180, cy + 5, 170, cy + 10);
+      this.curGfx.fillTriangle(170, cy, 180, cy + 5, 170, cy + 10);
     }
 
     const highlightAlpha = 0.3 + Math.sin(Date.now() / 300) * 0.1;
-    this.g.lineStyle(2, red, highlightAlpha);
-    this.g.strokeRect(180, 195, 280, 30);
+    this.curGfx.lineStyle(2, red, highlightAlpha);
+    this.curGfx.strokeRect(180, 195, 280, 30);
   }
 
   private toggleLang(): void {
