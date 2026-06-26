@@ -27,6 +27,7 @@ export class NameScene extends Phaser.Scene {
     this._gridTexts = [];
     this._touchBtns.forEach(t => t.destroy());
     this._touchBtns = [];
+    if (this._backTxt) { this._backTxt.destroy(); this._backTxt = undefined; }
     if (this._titleTxt) { this._titleTxt.destroy(); this._titleTxt = undefined; }
     if (this._instrTxt) { this._instrTxt.destroy(); this._instrTxt = undefined; }
     if (this.nameText) { this.nameText.destroy(); this.nameText = undefined as any; }
