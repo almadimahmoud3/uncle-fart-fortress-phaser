@@ -52,6 +52,7 @@ export class GameScene extends Phaser.Scene {
   private waveStarted = false;
   private wakeCd = 0;
   private waveAnnTmr = 0;
+  private waveCooldown = 0;
   private fartAnimActive = false;
   private fartAnimTimer = 0;
 
@@ -100,6 +101,7 @@ export class GameScene extends Phaser.Scene {
     this.waveStarted = false;
     this.wakeCd = 0;
     this.waveAnnTmr = 0;
+    this.waveCooldown = 0;
     this.fartAnimActive = false;
     this.fartAnimTimer = 0;
     this.fCD = { quick: 0, mega: 0, silent: 0 };
@@ -245,11 +247,11 @@ export class GameScene extends Phaser.Scene {
     if (this.snoreTmr > 4000) {
       this.snoring = !this.snoring;
       this.snoreTmr = 0;
-      if (this.snoring) this.audio.playSnore();
+      if (this.snoring) { try { this.audio.playSnore(); } catch { /* ignore */ } }
     }
 
-    // Wave management
-    if (!this.waveStarted) {
+    // Wave management (with cooldown between waves)
+    if (!this.waveStarted && this.waveCooldown <= 0) {
       this.relsInWave = 5 + this.wave * 2;
       this.relsSpawned = 0;
       this.spawnTmr = 0;
@@ -267,11 +269,17 @@ export class GameScene extends Phaser.Scene {
     // Wave complete (only if all spawned and all dead)
     if (this.relsSpawned >= this.relsInWave && this.relatives.length === 0 && this.waveStarted) {
       this.waveStarted = false;
+      this.waveCooldown = 2000; // 2 second delay before next wave
       try { this.audio.playWaveComplete(); } catch { /* ignore */ }
       this.wave++;
       const bonus = 50 * this.wave;
       this.score += bonus;
       this.addFloat(320, 200, `${t('wave')} ${this.wave}! +${bonus}`, C.uiText, 14);
+    }
+    // Wave cooldown
+    if (this.waveCooldown > 0) {
+      this.waveCooldown -= dt;
+      if (this.waveCooldown <= 0) this.waveCooldown = 0;
     }
 
     // Update relatives

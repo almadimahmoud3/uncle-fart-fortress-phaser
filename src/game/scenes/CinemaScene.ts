@@ -246,7 +246,11 @@ export class CinemaScene extends Phaser.Scene {
       this.g.fillStyle(0x000000, 0.2); this.g.fillRect(ux - 12, uy + 22, 28, 5);
       this.g.fillStyle(pants); this.g.fillRect(ux - 4, uy + 14, 7, 10 + leg); this.g.fillRect(ux + 3, uy + 14, 7, 10 - leg);
       this.g.fillStyle(skin); this.g.fillRect(ux - 14, uy - 4, 32, 20);
-      this.g.fillStyle(skinShadow); this.g.fillRect(ux - 12, uy + 6, 28, 8);
+      // Visible stomach/torso area with better contrast
+      this.g.fillStyle(skinShadow); this.g.fillRect(ux - 10, uy + 2, 24, 14);
+      this.g.fillStyle(skin); this.g.fillRect(ux - 8, uy + 4, 20, 10);
+      this.g.fillStyle(skinDark); this.g.fillRect(ux - 2, uy + 8, 8, 4);
+      // Head
       this.g.fillStyle(skin); this.g.fillRect(ux - 8, uy - 18, 24, 16);
       this.g.fillStyle(hairBrown); this.g.fillRect(ux - 8, uy - 22, 22, 6);
       this.g.fillStyle(0x000000); this.g.fillRect(ux - 2, uy - 12, 4, 4); this.g.fillRect(ux + 6, uy - 12, 4, 4);
