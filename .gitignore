@@ -1,0 +1,8 @@
+node_modules/
+dist/
+android/
+ios/
+*.local
+.env
+.DS_Store
+Thumbs.db
