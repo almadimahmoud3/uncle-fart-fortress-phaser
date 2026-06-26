@@ -12,19 +12,40 @@ export class SettingsScene extends Phaser.Scene {
   private curGfx!: Phaser.GameObjects.Graphics;
   private audio!: GameAudio;
   private cur = 0;
-  private texts: Phaser.GameObjects.Text[] = [];
+  private titleTxt!: Phaser.GameObjects.Text;
+  private langTxt!: Phaser.GameObjects.Text;
+  private langLabelTxt!: Phaser.GameObjects.Text;
+  private hintTxt!: Phaser.GameObjects.Text;
   private _backTxt?: Phaser.GameObjects.Text;
 
   constructor() { super('Settings'); }
 
   create(): void {
     this.g = this.add.graphics().setDepth(0);
-    this.curGfx = this.add.graphics().setDepth(15);
+    this.curGfx = this.add.graphics().setDepth(5);
     this.audio = new GameAudio();
     this.cur = 0;
-    this.texts.forEach(tx => tx.destroy());
-    this.texts = [];
     if (this._backTxt) { this._backTxt.destroy(); this._backTxt = undefined; }
+
+    const style: Phaser.Types.GameObjects.Text.TextStyle = {
+      fontFamily: '"Press Start 2P"', color: C.uiText,
+    };
+
+    this.titleTxt = this.add.text(320, 100, t('settingsTitle'), {
+      ...style, fontSize: '16px', color: C.uiRed,
+    }).setOrigin(0.5, 0).setDepth(10);
+
+    this.langTxt = this.add.text(320, 155, t('language'), {
+      ...style, fontSize: '10px', color: C.uiTextLight,
+    }).setOrigin(0.5, 0).setDepth(10);
+
+    this.langLabelTxt = this.add.text(320, 210, '', {
+      ...style, fontSize: '12px', color: C.uiText,
+    }).setOrigin(0.5, 0).setDepth(10);
+
+    this.hintTxt = this.add.text(320, 275, t('pressEnterBack'), {
+      ...style, fontSize: '8px', color: C.uiTextLight,
+    }).setOrigin(0.5, 0).setDepth(10);
 
     this.input.keyboard!.on('keydown', (e: KeyboardEvent) => this.handleKey(e.key));
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
@@ -55,33 +76,12 @@ export class SettingsScene extends Phaser.Scene {
       }).setOrigin(0.5, 0.5).setDepth(11);
     }
 
-    if (this.texts.length === 0) {
-      const style: Phaser.Types.GameObjects.Text.TextStyle = {
-        fontFamily: '"Press Start 2P"', color: C.uiText,
-      };
-
-      this.texts.push(this.add.text(320, 100, t('settingsTitle'), {
-        ...style, fontSize: '16px', color: C.uiRed,
-      }).setOrigin(0.5, 0).setDepth(10));
-
-      this.texts.push(this.add.text(320, 155, t('language'), {
-        ...style, fontSize: '10px', color: C.uiTextLight,
-      }).setOrigin(0.5, 0).setDepth(10));
-
-      this.texts.push(this.add.text(320, 210, '', {
-        ...style, fontSize: '12px', color: C.uiText,
-      }).setOrigin(0.5, 0).setDepth(10));
-
-      this.texts.push(this.add.text(320, 275, t('pressEnterBack'), {
-        ...style, fontSize: '8px', color: C.uiTextLight,
-      }).setOrigin(0.5, 0).setDepth(10));
-    }
-
+    // Update lang label text (only this one changes dynamically)
     const lang = getLang();
     const langLabel = lang === 'en' ? 'ENGLISH  ▸  日本語' : 'English  ▸  日本語';
-    this.texts[2].setText(langLabel);
+    this.langLabelTxt.setText(langLabel);
 
-    // Cursor + highlight (separate graphics at higher depth)
+    // Cursor + highlight (separate graphics at depth 5 — below texts)
     this.curGfx.clear();
     const red = Phaser.Display.Color.HexStringToColor(C.uiRed).color;
     this.curGfx.fillStyle(red);
@@ -100,8 +100,10 @@ export class SettingsScene extends Phaser.Scene {
     const newLang = current === 'en' ? 'ja' : 'en';
     setLang(newLang);
     this.audio.playMenuSelect();
-    this.texts.forEach(tx => tx.destroy());
-    this.texts = [];
+    // Update text content in place — never destroy/recreate
+    this.titleTxt.setText(t('settingsTitle'));
+    this.langTxt.setText(t('language'));
+    this.hintTxt.setText(t('pressEnterBack'));
   }
 
   private goBack(): void {
@@ -109,6 +111,12 @@ export class SettingsScene extends Phaser.Scene {
     // Destroy audio before leaving
     this.audio.destroy();
     this.scene.start('Title');
+  }
+
+  shutdown(): void {
+    // Clean up keyboard listener
+    this.input.keyboard?.removeAllListeners();
+    this.input.removeAllListeners();
   }
 
   private handleKey(key: string): void {
