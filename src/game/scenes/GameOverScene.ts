@@ -93,7 +93,8 @@ export class GameOverScene extends Phaser.Scene {
 
   private doAction(idx: number): void {
     this.audio.playMenuSelect();
+    this.audio.destroy();
     if (idx === 0) this.scene.start('Game');
-    if (idx === 1) { this.scene.start('Title'); }
+    if (idx === 1) this.scene.start('Title');
   }
 }

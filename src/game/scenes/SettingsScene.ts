@@ -13,6 +13,7 @@ export class SettingsScene extends Phaser.Scene {
   private audio!: GameAudio;
   private cur = 0;
   private texts: Phaser.GameObjects.Text[] = [];
+  private _backTxt?: Phaser.GameObjects.Text;
 
   constructor() { super('Settings'); }
 
@@ -27,9 +28,11 @@ export class SettingsScene extends Phaser.Scene {
     this.input.keyboard!.on('keydown', (e: KeyboardEvent) => this.handleKey(e.key));
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
       const mx = pointer.x, my = pointer.y;
+      // Back arrow area (top-left)
+      if (mx < 60 && my < 60) { this.goBack(); return; }
+      // Language toggle area
       if (mx > 160 && mx < 480) {
-        if (my > 200 && my < 240) this.toggleLang();
-        if (my > 260 && my < 300) this.goBack();
+        if (my > 190 && my < 240) this.toggleLang();
       }
     });
   }
@@ -43,6 +46,13 @@ export class SettingsScene extends Phaser.Scene {
     this.g.fillRect(0, 0, GAME_W, GAME_H);
 
     drawPokeBox(this.g, 100, 80, 440, 280);
+
+    // Back arrow (top-left corner)
+    if (!this._backTxt) {
+      this._backTxt = this.add.text(25, 25, '◀', {
+        fontFamily: '"Press Start 2P"', fontSize: '14px', color: C.uiTextLight,
+      }).setOrigin(0.5, 0.5).setDepth(11);
+    }
 
     if (this.texts.length === 0) {
       const style: Phaser.Types.GameObjects.Text.TextStyle = {
