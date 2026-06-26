@@ -1,0 +1,8 @@
+<platform android>
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+</platform>
+<platform ios>
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+</platform>
