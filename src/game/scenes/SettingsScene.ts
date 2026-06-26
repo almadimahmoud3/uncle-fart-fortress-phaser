@@ -24,6 +24,7 @@ export class SettingsScene extends Phaser.Scene {
     this.cur = 0;
     this.texts.forEach(tx => tx.destroy());
     this.texts = [];
+    if (this._backTxt) { this._backTxt.destroy(); this._backTxt = undefined; }
 
     this.input.keyboard!.on('keydown', (e: KeyboardEvent) => this.handleKey(e.key));
     this.input.on('pointerdown', (pointer: Phaser.Input.Pointer) => {
