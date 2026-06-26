@@ -2,7 +2,7 @@
   "name": "Uncle's Fart Fortress",
   "short_name": "UFF",
   "description": "A retro-style Phaser game where Uncle sleeps on the couch and you use farts to stop relatives from waking him!",
-  "start_url": "./",
+  "start_url": "./index.html",
   "scope": "./",
   "id": "uncle-fart-fortress",
   "display": "standalone",

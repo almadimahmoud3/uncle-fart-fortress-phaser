@@ -57,7 +57,7 @@ export class GameOverScene extends Phaser.Scene {
     this.curGfx.clear();
     const red = Phaser.Display.Color.HexStringToColor(C.uiRed).color;
     this.curGfx.fillStyle(red);
-    const cy = 410 + this.cur * 24;
+    const cy = 408 + this.cur * 24;
     if (Math.floor(Date.now() / 250) % 2 === 0) {
       this.curGfx.fillTriangle(170, cy, 180, cy + 5, 170, cy + 10);
     }
